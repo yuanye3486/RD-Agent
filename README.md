@@ -114,9 +114,46 @@ Additionally, you can take a closer look at the examples in our **[🖥️ Live 
 
 # ⚡ Quick start
 
-### RD-Agent currently only supports Linux.
+### Supported Platforms
 
-You can try above demos by running the following command:
+RD-Agent currently supports Linux on both x86_64 and ARM architectures. This includes:
+- Standard Linux distributions on x86_64 hardware
+- ARM-based devices like Orange Pi 5 Plus and Raspberry Pi
+
+# 🧾 Running on ARM-based Devices (Orange Pi 5 Plus)
+
+RD-Agent can be run on ARM-based devices such as Orange Pi 5 Plus. Since these devices typically don't have CUDA support, we've made modifications to ensure compatibility:
+
+1. Hardware detection has been improved to correctly identify ARM architecture
+2. XGBoost parameters are now dynamically set based on hardware availability
+3. Neural network models automatically fall back to CPU when CUDA is not available
+4. Dockerfiles have been created specifically for ARM architecture
+
+To run RD-Agent on Orange Pi 5 Plus:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/microsoft/RD-Agent
+   cd RD-Agent
+   ```
+
+2. Create a Conda environment:
+   ```bash
+   conda create -n rdagent python=3.10
+   conda activate rdagent
+   ```
+
+3. Install dependencies:
+   ```bash
+   make dev
+   ```
+
+4. For Docker-based execution on ARM, use the ARM-specific Dockerfile:
+   ```bash
+   docker build -f rdagent/scenarios/kaggle/docker/kaggle_docker/Dockerfile.arm -t rdagent-arm .
+   ```
+
+The system will automatically detect the hardware and configure the appropriate settings for optimal performance.
 
 ### 🐳 Docker installation.
 Users must ensure Docker is installed before attempting most scenarios. Please refer to the [official 🐳Docker page](https://docs.docker.com/engine/install/) for installation instructions.

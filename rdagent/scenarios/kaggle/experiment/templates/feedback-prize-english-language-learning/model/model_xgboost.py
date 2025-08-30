@@ -4,6 +4,7 @@ motivation  of the model
 
 import pandas as pd
 import xgboost as xgb
+from rdagent.utils.fmt import get_xgboost_params
 from sklearn.multioutput import MultiOutputRegressor
 
 
@@ -14,8 +15,11 @@ def is_sparse_df(df: pd.DataFrame) -> bool:
 
 def fit(X_train: pd.DataFrame, y_train: pd.DataFrame, X_valid: pd.DataFrame, y_valid: pd.DataFrame):
     """Define and train the model. Merge feature_select"""
+    # Get XGBoost parameters dynamically based on hardware availability
+    xgb_params = get_xgboost_params()
+    
     xgb_estimator = xgb.XGBRegressor(
-        n_estimators=500, random_state=0, objective="reg:squarederror", tree_method="hist", device="cuda"
+        n_estimators=500, random_state=0, objective="reg:squarederror", **xgb_params
     )
 
     model = MultiOutputRegressor(xgb_estimator, n_jobs=-1)

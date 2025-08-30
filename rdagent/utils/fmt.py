@@ -2,6 +2,42 @@
 Tools that support generating better formats.
 """
 
+def get_xgboost_params(use_gpu=True):
+    """
+    Get XGBoost parameters based on hardware availability.
+    
+    Args:
+        use_gpu (bool): Whether to try to use GPU if available
+        
+    Returns:
+        dict: XGBoost parameters
+    """
+    # Check if GPU is available and should be used
+    gpu_available = False
+    if use_gpu:
+        try:
+            import torch
+            gpu_available = torch.cuda.is_available()
+        except ImportError:
+            try:
+                import subprocess
+                result = subprocess.run(["nvidia-smi"], 
+                                      capture_output=True, text=True, timeout=10)
+                gpu_available = result.returncode == 0
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                gpu_available = False
+    
+    if gpu_available:
+        return {
+            "tree_method": "gpu_hist",
+            "device": "cuda",
+        }
+    else:
+        return {
+            "tree_method": "hist",
+            "device": "cpu",
+        }
+
 
 def shrink_text(
     text: str, context_lines: int = 200, line_len: int = 5000, *, row_shrink: bool = True, col_shrink: bool = True

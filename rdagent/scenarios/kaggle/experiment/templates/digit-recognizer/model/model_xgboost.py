@@ -4,6 +4,7 @@ motivation  of the model
 
 import pandas as pd
 import xgboost as xgb
+from rdagent.utils.fmt import get_xgboost_params
 
 
 def fit(X_train, y_train, X_valid, y_valid):
@@ -11,13 +12,15 @@ def fit(X_train, y_train, X_valid, y_valid):
     dtrain = xgb.DMatrix(X_train, label=y_train)
     dvalid = xgb.DMatrix(X_valid, label=y_valid)
 
+    # Get XGBoost parameters dynamically based on hardware availability
+    xgb_params = get_xgboost_params()
+    
     params = {
         "objective": "multi:softmax",
         "eval_metric": "mlogloss",
         "num_class": 10,
         "nthread": -1,
-        "tree_method": "gpu_hist",
-        "device": "cuda",
+        **xgb_params,  # This will include tree_method and device parameters
     }
     num_round = 100
 
