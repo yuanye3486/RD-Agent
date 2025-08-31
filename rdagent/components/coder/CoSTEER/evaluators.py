@@ -73,7 +73,14 @@ class CoSTEERSingleFeedback(Feedback):
 
         for attr in "execution", "return_checking", "code":
             if data[attr] is not None and not isinstance(data[attr], str):
-                raise ValueError(f"'{attr}' must be a string, not {type(data[attr])}")
+                # Convert dict or other types to well-formatted string
+                if isinstance(data[attr], dict):
+                    # For dict, use json.dumps for better readability
+                    import json
+                    data[attr] = json.dumps(data[attr], indent=2)
+                else:
+                    # For other types, use str() conversion
+                    data[attr] = str(data[attr])
         return data
 
     def __str__(self) -> str:
