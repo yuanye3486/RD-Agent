@@ -220,6 +220,10 @@ class FBWorkspace(Workspace):
         """
         self.prepare()
         for k, v in files.items():
+            # Ensure all values are strings to prevent TypeError when writing to files
+            if not isinstance(v, str):
+                v = str(v)
+                
             target_file_path = self.workspace_path / k  # Define target_file_path before using it
             if v == self.DEL_KEY:  # Use self.DEL_KEY to access the class variable
                 if target_file_path.exists():
