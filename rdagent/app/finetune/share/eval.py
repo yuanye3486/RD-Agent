@@ -48,5 +48,6 @@ class PrevModelLoadEvaluator(CoSTEEREvaluator):
             CoSTEERSingleFeedback,
             system_prompt=system_prompt,
             user_prompt=user_prompt,
+            init_kwargs_update_func=CoSTEERSingleFeedback.val_and_update_init_dict,
         )
         return csfb

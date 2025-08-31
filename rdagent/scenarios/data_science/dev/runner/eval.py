@@ -211,7 +211,7 @@ class DSRunnerEvaluator(CoSTEEREvaluator):
             DSRunnerFeedback,
             system_prompt=system_prompt,
             user_prompt=user_prompt,
-            # init_kwargs_update_func=DSRunnerFeedback.val_and_update_init_dict,
+            init_kwargs_update_func=DSRunnerFeedback.val_and_update_init_dict,
         )
         try:
             feedback.score = score_df.loc["ensemble"].iloc[0] if score_ret_code == 0 else None

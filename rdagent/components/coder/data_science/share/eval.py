@@ -160,6 +160,7 @@ class ModelDumpEvaluator(CoSTEEREvaluator):
             CoSTEERSingleFeedback,
             system_prompt=system_prompt,
             user_prompt=user_prompt,
+            init_kwargs_update_func=CoSTEERSingleFeedback.val_and_update_init_dict,
         )
 
         if DS_RD_SETTING.model_dump_check_level == "high":
