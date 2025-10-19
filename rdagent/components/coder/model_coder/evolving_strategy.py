@@ -80,6 +80,13 @@ class ModelMultiProcessEvolvingStrategy(MultiProcessEvolvingStrategy):
         return code
 
     def assign_code_list_to_evo(self, code_list, evo):
+        # Validate the type of the code
+        for index in range(len(code_list)):
+            if isinstance(code_list[index], str):
+                continue
+            elif isinstance(code_list[index], dict) and "factor.py" in code_list[index]:
+                code_list[index] = code_list[index].get("factor.py", "")
+
         for index in range(len(evo.sub_tasks)):
             if code_list[index] is None:
                 continue

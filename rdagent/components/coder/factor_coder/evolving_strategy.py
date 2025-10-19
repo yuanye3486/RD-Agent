@@ -27,10 +27,10 @@ class FactorMultiProcessEvolvingStrategy(MultiProcessEvolvingStrategy):
         self.haveSelected = False
 
     def error_summary(
-        self,
-        target_task: FactorTask,
-        queried_former_failed_knowledge_to_render: list,
-        queried_similar_error_knowledge_to_render: list,
+            self,
+            target_task: FactorTask,
+            queried_former_failed_knowledge_to_render: list,
+            queried_similar_error_knowledge_to_render: list,
     ) -> str:
         error_summary_system_prompt = T(".prompts:evolving_strategy_error_summary_v2_system").r(
             scenario=self.scen.get_scenario_all_desc(target_task),
@@ -42,10 +42,10 @@ class FactorMultiProcessEvolvingStrategy(MultiProcessEvolvingStrategy):
                 queried_similar_error_knowledge=queried_similar_error_knowledge_to_render,
             )
             if (
-                APIBackend().build_messages_and_calculate_token(
-                    user_prompt=error_summary_user_prompt, system_prompt=error_summary_system_prompt
-                )
-                < APIBackend().chat_token_limit
+                    APIBackend().build_messages_and_calculate_token(
+                        user_prompt=error_summary_user_prompt, system_prompt=error_summary_system_prompt
+                    )
+                    < APIBackend().chat_token_limit
             ):
                 break
             elif len(queried_similar_error_knowledge_to_render) > 0:
@@ -58,11 +58,11 @@ class FactorMultiProcessEvolvingStrategy(MultiProcessEvolvingStrategy):
         return error_summary_critics
 
     def implement_one_task(
-        self,
-        target_task: FactorTask,
-        queried_knowledge: CoSTEERQueriedKnowledge,
-        workspace: FBWorkspace | None = None,
-        prev_task_feedback: CoSTEERSingleFeedback | None = None,
+            self,
+            target_task: FactorTask,
+            queried_knowledge: CoSTEERQueriedKnowledge,
+            workspace: FBWorkspace | None = None,
+            prev_task_feedback: CoSTEERSingleFeedback | None = None,
     ) -> str:
         target_factor_task_information = target_task.get_task_information()
 
@@ -102,10 +102,10 @@ class FactorMultiProcessEvolvingStrategy(MultiProcessEvolvingStrategy):
         for _ in range(10):  # max attempt to reduce the length of user_prompt
             # 总结error（可选）
             if (
-                isinstance(queried_knowledge, CoSTEERQueriedKnowledgeV2)
-                and FACTOR_COSTEER_SETTINGS.v2_error_summary
-                and len(queried_similar_error_knowledge_to_render) != 0
-                and len(queried_former_failed_knowledge_to_render) != 0
+                    isinstance(queried_knowledge, CoSTEERQueriedKnowledgeV2)
+                    and FACTOR_COSTEER_SETTINGS.v2_error_summary
+                    and len(queried_similar_error_knowledge_to_render) != 0
+                    and len(queried_former_failed_knowledge_to_render) != 0
             ):
                 error_summary_critics = self.error_summary(
                     target_task,
@@ -123,14 +123,15 @@ class FactorMultiProcessEvolvingStrategy(MultiProcessEvolvingStrategy):
                 latest_attempt_to_latest_successful_execution=latest_attempt_to_latest_successful_execution,
             )
             if (
-                APIBackend().build_messages_and_calculate_token(user_prompt=user_prompt, system_prompt=system_prompt)
-                < APIBackend().chat_token_limit
+                    APIBackend().build_messages_and_calculate_token(user_prompt=user_prompt,
+                                                                    system_prompt=system_prompt)
+                    < APIBackend().chat_token_limit
             ):
                 break
             elif len(queried_former_failed_knowledge_to_render) > 1:
                 queried_former_failed_knowledge_to_render = queried_former_failed_knowledge_to_render[1:]
             elif len(queried_similar_successful_knowledge_to_render) > len(
-                queried_similar_error_knowledge_to_render,
+                    queried_similar_error_knowledge_to_render,
             ):
                 queried_similar_successful_knowledge_to_render = queried_similar_successful_knowledge_to_render[:-1]
             elif len(queried_similar_error_knowledge_to_render) > 0:
@@ -164,6 +165,13 @@ class FactorMultiProcessEvolvingStrategy(MultiProcessEvolvingStrategy):
             return ""  # return empty code if failed to get code after 10 attempts
 
     def assign_code_list_to_evo(self, code_list, evo):
+        # Validate the type of the code
+        for index in range(len(code_list)):
+            if isinstance(code_list[index], str):
+                continue
+            elif isinstance(code_list[index], dict) and "factor.py" in code_list[index]:
+                code_list[index] = code_list[index].get("factor.py", "")
+
         for index in range(len(evo.sub_tasks)):
             if code_list[index] is None:
                 continue
